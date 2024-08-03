@@ -7,6 +7,9 @@
             <li>
                 <Link :href="route('pages.about')">About</Link>
             </li>
+            <li>
+                <Link :href="route('user.index')">User</Link>
+            </li>
         </ul>
     </nav>
 </template>
