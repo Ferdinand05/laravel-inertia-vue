@@ -2,7 +2,10 @@
     <div>
         <header>
             <Navbar></Navbar>
-            <Head :title="title"></Head>
+            <Head>
+                <title>{{ title }}</title>
+                <meta name="description" :content="metaDesc" />
+            </Head>
         </header>
 
         <main>
@@ -19,7 +22,7 @@
 import { watch, ref } from "vue";
 import Navbar from "../Components/Navbar.vue";
 import { Head } from "@inertiajs/vue3";
-defineProps({ title: String });
+defineProps({ title: String, metaDesc: String });
 </script>
 
 <style scoped>

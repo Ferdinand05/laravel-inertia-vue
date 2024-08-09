@@ -13,13 +13,12 @@ class PagesController extends Controller
     public function index()
     {
 
-        $name = [
-            'name' => 'Ferdinand',
-            'age' => '22',
-            'country' => 'Indonesia'
-        ];
 
-        return Inertia::render('Home', ['profile' => $name]);
+
+
+        //NOTE -  bisa di share disini atau di share scara otomatis di handleRequestInertia, di share kesemua view/comp
+        // Inertia::share('auth.user', 'Ferdinand');
+        return Inertia::render('Home');
     }
 
     public function about()

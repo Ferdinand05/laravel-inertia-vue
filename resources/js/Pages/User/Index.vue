@@ -1,15 +1,20 @@
 <template>
-    <Layout title="User Page">
-        <div>
-            <h2>User Page</h2>
-            <Link :href="route('user.create')" as="button">Create User</Link>
+    <Layout title="User Page" metaDesc="This is a User page">
+        <div class="mt-10">
+            <h2 class="text-3xl">User Page</h2>
+            <Link
+                :href="route('user.create')"
+                as="button"
+                class="bg-green-400 px-2 rounded-md font-medium hover:bg-green-500 my-2"
+                >Create User</Link
+            >
             <br />
             {{ userCount }} User <br /><br />
             <div style="font-size: medium; color: red">
                 {{ $page.props.flash.message }}
             </div>
-            <table border="1" cellspacing="0" cellpadding="5">
-                <thead>
+            <table class="table table-auto md:table-fixed">
+                <thead class="">
                     <tr>
                         <th>No</th>
                         <th>Name</th>
@@ -22,21 +27,25 @@
                         <td>{{ user.name }}</td>
                         <td>
                             <Link
+                                class="bg-sky-200 px-2 rounded-md font-medium hover:bg-sky-300"
                                 as="button"
                                 :href="route('user.show', user.id)"
                                 >Detail</Link
                             >
                             <Link
+                                class="bg-blue-400 px-2 rounded-md font-medium hover:bg-blue-500"
                                 as="button"
                                 :href="route('user.edit', user.id)"
                                 style="margin-left: 5px"
                                 >Edit</Link
                             >
                             <Link
+                                class="bg-red-400 px-2 rounded-md font-medium hover:bg-red-500"
                                 as="button"
                                 href=""
                                 @click.prevent="deleteUser(user.id)"
                                 style="margin-left: 5px"
+                                preserve-scroll
                                 >Delete</Link
                             >
                         </td>

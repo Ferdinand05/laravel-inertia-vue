@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Contracts\Session\Session;
+use Inertia\Inertia;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Inertia\Inertia;
+use Illuminate\Contracts\Session\Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -36,14 +39,31 @@ class UserController extends Controller
         $request->validate([
             'name' => ['required', 'string'],
             'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'min:6']
+            'password' => ['required', 'min:6', 'confirmed'],
+            'avatar' => ['image', 'nullable', 'mimes:png,jpg,jpeg']
         ]);
 
-        User::create([
+
+        $file = $request->file('avatar');
+        if ($file) {
+            $name = Str::random(10);
+            $ext = $file->getClientOriginalExtension();
+
+            $avatar = $name . '.' . $ext;
+            $file->storeAs('avatar', $avatar);
+        } else {
+            $avatar = null;
+        }
+
+
+        $user =  User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password
+            'password' => $request->password,
+            'avatar' => $avatar
         ]);
+
+
 
         return redirect(route('user.index'))->with('message', 'data created successfully');
     }
@@ -71,10 +91,28 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|min:4',
-            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($id)]
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($id)],
+            'avatar' => ['image', 'mimes:png,jpg,jpeg', 'nullable']
         ]);
 
-        User::whereId($id)->update($request->only(['name', 'email']));
+
+        $file = $request->file('avatar');
+        $user = User::whereId($id)->first();
+        if ($file) {
+            $name = Str::random(10);
+            $ext = $file->getClientOriginalExtension();
+            $avatar = $name . '.' . $ext;
+
+            $file->storeAs('avatar', $avatar);
+        } else {
+            $avatar = $user->avatar;
+        }
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'avatar' => $avatar
+        ]);
 
         return to_route('user.index')->with('message', 'Data has been updated successfully.');
     }
@@ -84,8 +122,9 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        User::destroy($id);
-
+        $user = User::find($id);
+        Storage::delete('avatar/' . $user->avatar);
+        $user->delete();
         return to_route('user.index')->with('message', 'data has been deleted');
     }
 }
